@@ -16,7 +16,7 @@ export const MessageInput = ({ callbackMessage }, ref) => {
 
   const sendMessage = () => {
     if (value) {
-      callbackMessage(value);
+      callbackMessage("User", value);
       setValue("");
     }
   };

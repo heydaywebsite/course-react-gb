@@ -1,47 +1,34 @@
 import { Stack, Grid } from "@mui/material";
-import { ChatsList } from "../ChatsList/ChatsList";
-import { MessagesList } from "../MessagesList/MesaggesList";
+import styled from "@emotion/styled";
 
-export const Layout = () => {
+export const Layout = ({ chats, messages }) => {
+  const MainWrapper = styled(Stack)`
+    height: 100%;
+    padding-top: 60px;
+  `;
+  const ChatsWrapper = styled(Grid)`
+    height: 100%;
+  `;
+  const MessagesWrapper = styled(Grid)`
+    height: 100%;
+  `;
+
   return (
     <Stack sx={{ height: "100%" }}>
-      <Stack
-        direction="row"
-        color="text.secondary"
-        bgcolor="secondary.dark"
-        sx={{
-          width: "100%",
-          height: "60px",
-          padding: "20px",
-          position: "fixed",
-          top: 0,
-          zIndex: 1,
-        }}
-      >
-        Header
-      </Stack>
-      <Stack direction="row" sx={{ height: "100%", paddingTop: "60px" }}>
-        <Grid container sx={{ height: "100%" }}>
-          <Grid
-            item
-            md={3}
-            bgcolor="background.default"
-            sx={{ height: "100%" }}
-          >
-            <ChatsList />
-          </Grid>
-          <Grid
-            item
-            container
-            direction="column"
-            md={9}
-            bgcolor="background.paper"
-            sx={{ height: "100%" }}
-          >
-            <MessagesList />
-          </Grid>
-        </Grid>
-      </Stack>
+      <MainWrapper direction="row">
+        <ChatsWrapper item container md={3} bgcolor="background.default">
+          {chats}
+        </ChatsWrapper>
+        <MessagesWrapper
+          item
+          container
+          direction="column"
+          md={9}
+          bgcolor="background.paper"
+        >
+          {messages}
+        </MessagesWrapper>
+      </MainWrapper>
     </Stack>
   );
 };

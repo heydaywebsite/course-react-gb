@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { AppRoutes } from "./pages";
 import { ThemeProvider, createTheme } from "@mui/material";
 import "./index.scss";
 import "./reset.css";
-import { Layout } from "./components/Layout/Layout";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -25,7 +25,7 @@ const theme = createTheme({
     },
     text: {
       primary: "#fff",
-      secondary: "rgba(255, 255, 255, 0.7)",
+      secondary: "#ffffffb3",
     },
   },
 });
@@ -33,7 +33,7 @@ const theme = createTheme({
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <Layout />
+      <AppRoutes />
     </ThemeProvider>
   </React.StrictMode>
 );

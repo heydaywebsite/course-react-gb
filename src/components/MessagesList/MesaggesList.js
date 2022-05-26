@@ -1,72 +1,113 @@
-import { useState, useEffect } from "react";
-import { Message } from "./Message/Message";
+import { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import { Message } from "./Message";
+import { MessageInput } from "./MessageInput";
 import { Stack, List, ListItem } from "@mui/material";
-import { MessageInput } from "./MessageInput/MessageInput";
+import styled from "@emotion/styled";
 
-const botMessage = { author: "bot", message: "hi" };
+const StyledListItem = styled(ListItem)`
+  border-radius: 3px;
+  margin-bottom: 10px;
+`;
 
-export const MessagesList = () => {
-  const [messagesList, setMessageList] = useState([botMessage]);
+const MessagesWrapper = styled(Stack)`
+  height: 100%;
+  margin-bottom: 120px;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 6px;
+    margin-right: 5px;
+  },
+  &::-webkit-scrollbar-track {
+    background: #ffffffb3;
+    border-radius: 100px;
+  },
+  &::-webkit-scrollbar-thumb {
+    background: #6B7786;
+    border-radius: 100px;
+  },
+`;
 
-  const callbackMessage = (value) => {
-    setMessageList([...messagesList, { author: "user", message: value }]);
+const InputWrapper = styled(Stack)`
+  width: 100%;
+  height: 120px;
+  position: fixed;
+  bottom: 0;
+`;
+
+const getBotMessage = () => ({
+  author: "Bot",
+  message: "Hello from bot! Tap '0' or '1'",
+  date: new Date(),
+});
+
+const getBotAnswer = (message) => {
+  const answers = {
+    0: "Your choice is '0'",
+    1: "Your choice is '1'",
   };
 
+  return answers[message] || "not found answer";
+};
+
+export const MessagesList = () => {
+  const { chatId } = useParams();
+  const [messagesList, setMessageList] = useState({ chat1: [getBotMessage()] });
+
+  const callbackMessage = useCallback(
+    (author, message) => {
+      setMessageList((state) => ({
+        ...state,
+        [chatId]: [...(state[chatId] ?? []), { author, message }],
+      }));
+    },
+    [chatId]
+  );
+
   useEffect(() => {
-    let lastMessage = messagesList.at(-1);
+    const messages = messagesList[chatId] ?? [];
+    const lastMessage = messages.at(-1);
     let timerId = null;
-    if (messagesList.length && lastMessage.author === "user") {
+    if (messages.length && lastMessage?.author === "User") {
       timerId = setTimeout(() => {
-        setMessageList([...messagesList, botMessage]);
+        setMessageList(
+          callbackMessage("Bot", getBotAnswer(lastMessage.message))
+        );
       }, 2000);
     }
 
     return () => {
       clearInterval(timerId);
     };
-  }, [messagesList]);
+  }, [messagesList, chatId, callbackMessage]);
+
+  const messages = messagesList[chatId] ?? [];
 
   return (
     <>
-      <Stack
-        direction="row"
-        sx={{ height: "100%", marginBottom: "120px", overflowY: "scroll" }}
-      >
+      <MessagesWrapper direction="row">
         <List sx={{ height: "100%", padding: "30px" }}>
-          {messagesList.map((message, index) => (
-            <ListItem
+          {messages.map((message, index) => (
+            <StyledListItem
               key={index}
               sx={
-                message.author === "user"
+                message?.author === "user"
                   ? {
                       backgroundColor: "info.main",
-                      marginBottom: "10px",
-                      borderRadius: "3px",
                     }
                   : {
                       backgroundColor: "info.dark",
-                      marginBottom: "20px",
-                      borderRadius: "3px",
                     }
               }
             >
               <Message message={message} />
-            </ListItem>
+            </StyledListItem>
           ))}
         </List>
-      </Stack>
-      <Stack
-        direction="row"
-        bgcolor="primary.dark"
-        sx={{
-          width: "100%",
-          height: "120px",
-          position: "fixed",
-          bottom: 0,
-        }}
-      >
+      </MessagesWrapper>
+      <InputWrapper direction="row" bgcolor="primary.dark">
         <MessageInput callbackMessage={callbackMessage} />
-      </Stack>
+      </InputWrapper>
     </>
   );
 };
