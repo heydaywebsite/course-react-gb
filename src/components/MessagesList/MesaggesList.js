@@ -55,11 +55,13 @@ export const MessagesList = () => {
   const [messagesList, setMessageList] = useState({ chat1: [getBotMessage()] });
 
   const callbackMessage = useCallback(
-    (author, message) => {
-      setMessageList((state) => ({
-        ...state,
-        [chatId]: [...(state[chatId] ?? []), { author, message }],
-      }));
+    (author = "User", message) => {
+      if (message) {
+        setMessageList((state) => ({
+          ...state,
+          [chatId]: [...(state[chatId] ?? []), { author, message }],
+        }));
+      }
     },
     [chatId]
   );

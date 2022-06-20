@@ -16,6 +16,7 @@ const StyledLink = styled(Typography)`
   border-bottom: 2px solid transparent;
   &:hover {
     border-bottom: 2px solid #ffffffb3;
+    cursor: pointer;
   }
 `;
 

@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import { AppRoutes } from "./pages";
 import { ThemeProvider, createTheme } from "@mui/material";
+import { store } from "./store";
 import "./index.scss";
 import "./reset.css";
 
@@ -32,8 +34,10 @@ const theme = createTheme({
 
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <AppRoutes />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <AppRoutes />
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>
 );
