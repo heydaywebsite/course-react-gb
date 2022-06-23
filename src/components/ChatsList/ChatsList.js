@@ -1,6 +1,17 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { List, ListItem, Typography } from "@mui/material";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { getChatList } from "../../store/chats/selectors";
+import { addChat } from "../../store/chats";
+import {
+  List,
+  ListItem,
+  Typography,
+  Dialog,
+  DialogTitle,
+  TextField,
+  Button,
+} from "@mui/material";
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 
@@ -20,17 +31,45 @@ const StyledListItem = styled(ListItem)`
 `;
 
 export const ChatsList = () => {
-  const [chats] = useState(["chat1", "chat2"]);
   const { chatId } = useParams();
+
+  const [visible, setVisible] = useState(false);
+  const [newChatName, setNewChatName] = useState("");
+  const chats = useSelector(getChatList, shallowEqual);
+  // const chats = useSelector((state) => state.chats.chatsList);
+  const dispatch = useDispatch();
+  const handleClose = () => setVisible(false);
+  const handleOpen = () => setVisible(true);
+  const handleChange = (e) => setNewChatName(e.target.value);
+
+  const onAddChat = () => {
+    dispatch(addChat(newChatName));
+    setNewChatName("");
+    handleClose();
+  };
+
   return (
-    <StyledList>
-      {chats.map((chat, index) => (
-        <Link key={index} to={`/chats/${chat}`}>
-          <StyledListItem selected={chatId === chat}>
-            <Typography>{chat}</Typography>
-          </StyledListItem>
-        </Link>
-      ))}
-    </StyledList>
+    <>
+      <StyledList>
+        {chats &&
+          Object.keys(chats).map((id, index) => (
+            <Link key={index} to={`/chats/${id}`}>
+              <StyledListItem selected={chatId === id}>
+                <Typography>{chats[id].name}</Typography>
+              </StyledListItem>
+            </Link>
+          ))}
+        <Typography color="text.secondary" sx={{ p: 4 }} onClick={handleOpen}>
+          Add chat...
+        </Typography>
+      </StyledList>
+      <Dialog open={visible} onClose={handleClose}>
+        <DialogTitle>Please enter a name for new chat</DialogTitle>
+        <TextField value={newChatName} onChange={handleChange} />
+        <Button onClick={onAddChat} disabled={!newChatName}>
+          Submit
+        </Button>
+      </Dialog>
+    </>
   );
 };

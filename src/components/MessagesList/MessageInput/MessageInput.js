@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addMessage } from "../../../store/messages";
 import { TextField, InputAdornment } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import styled from "@emotion/styled";
@@ -11,12 +14,18 @@ const StyledIcon = styled(Send)`
   }
 `;
 
-export const MessageInput = ({ callbackMessage }, ref) => {
+export const MessageInput = () => {
+  const { chatId } = useParams();
+
+  const dispatch = useDispatch();
+
+  const onAddMessage = (message) => dispatch(addMessage(chatId, message));
+
   const [value, setValue] = useState("");
 
   const sendMessage = () => {
     if (value) {
-      callbackMessage("User", value);
+      onAddMessage({ message: value, author: "User" });
       setValue("");
     }
   };

@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { getProfileStatus } from "../store/profile";
 import { toggleVisibleProfile } from "../store/profile";
 import {
   Stack,
@@ -17,7 +18,8 @@ const MainWrapper = styled(Stack)`
 `;
 
 export const ProfilePage = () => {
-  const profile = useSelector((state) => state.profile);
+  // const profile = useSelector((state) => state.profile);
+  const profile = useSelector(getProfileStatus, shallowEqual);
   const dispatch = useDispatch();
 
   return (
