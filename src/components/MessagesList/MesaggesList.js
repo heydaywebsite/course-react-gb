@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { addMessage } from "../../store/messages";
@@ -66,21 +66,13 @@ export const MessagesList = () => {
     dispatch(addMessage(chatId, firstBotMessage));
   }, [chatId]);
 
-  useEffect(() => {
-    const chatMessages = messages[chatId] ?? [];
-    const lastMessage = chatMessages.at(-1);
-    let timerId = null;
-    if (chatMessages.length && lastMessage.author === "User") {
-      timerId = setTimeout(() => {
-        const botAnswer = getBotAnswer(lastMessage.message);
-        dispatch(addMessage(chatId, botAnswer));
-      }, 2000);
+  const addMessageWithThunk = (chatId, message) => (dispatch, getState) => {
+    dispatch(addMessage(chatId, message));
+    if (message.author !== "Bot") {
+      const botMessage = getBotAnswer(message.message);
+      setTimeout(() => dispatch(addMessage(chatId, botMessage)), 2000);
     }
-
-    return () => {
-      clearInterval(timerId);
-    };
-  }, [chatId, messages]);
+  };
 
   return (
     <>
@@ -105,7 +97,7 @@ export const MessagesList = () => {
         </List>
       </MessagesWrapper>
       <InputWrapper direction="row" bgcolor="primary.dark">
-        <MessageInput />
+        <MessageInput addMessageWithThunk={addMessageWithThunk} />
       </InputWrapper>
     </>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addMessage } from "../../../store/messages";
@@ -14,12 +14,17 @@ const StyledIcon = styled(Send)`
   }
 `;
 
-export const MessageInput = () => {
+export const MessageInput = ({ addMessageWithThunk }) => {
   const { chatId } = useParams();
 
   const dispatch = useDispatch();
 
-  const onAddMessage = (message) => dispatch(addMessage(chatId, message));
+  const onAddMessage = useCallback(
+    (message) => {
+      dispatch(addMessageWithThunk(chatId, message));
+    },
+    [chatId, dispatch]
+  );
 
   const [value, setValue] = useState("");
 

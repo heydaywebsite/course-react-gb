@@ -53,8 +53,8 @@ export const ChatsList = () => {
       <StyledList>
         {chats &&
           Object.keys(chats).map((id, index) => (
-            <Link key={index} to={`/chats/${id}`}>
-              <StyledListItem selected={chatId === id}>
+            <Link key={index} to={`/chats/${chats[id].name}`}>
+              <StyledListItem selected={chatId === chats[id].name}>
                 <Typography>{chats[id].name}</Typography>
               </StyledListItem>
             </Link>

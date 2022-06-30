@@ -4,6 +4,8 @@ import { Provider } from "react-redux";
 import { AppRoutes } from "./pages";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { store } from "./store";
+import { persistor } from "./store";
+import { PersistGate } from "redux-persist/integration/react";
 import "./index.scss";
 import "./reset.css";
 
@@ -35,9 +37,11 @@ const theme = createTheme({
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <AppRoutes />
-      </ThemeProvider>
+      <PersistGate persistor={persistor} loading={<p>Loading...</p>}>
+        <ThemeProvider theme={theme}>
+          <AppRoutes />
+        </ThemeProvider>
+      </PersistGate>
     </Provider>
   </React.StrictMode>
 );
