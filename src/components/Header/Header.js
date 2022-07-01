@@ -47,6 +47,11 @@ export const Header = () => {
                 <Link to="/chats">Chats</Link>
               </StyledLink>
             </ListItem>
+            <ListItem>
+              <StyledLink>
+                <Link to="/gists">Gists</Link>
+              </StyledLink>
+            </ListItem>
           </List>
         </Stack>
       </Toolbar>
