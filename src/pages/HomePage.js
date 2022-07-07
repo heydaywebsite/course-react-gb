@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
-import { Stack, Typography } from "@mui/material";
+import { Stack, Box, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 
 export const HomePage = () => {
@@ -8,12 +9,31 @@ export const HomePage = () => {
     padding-top: 60px;
   `;
 
+  const StyledLink = styled(Typography)`
+    width: fit-content;
+    color: #5893df;
+    border-bottom: 2px solid transparent;
+    margin-bottom: 10px;
+    &:hover {
+      border-bottom: 2px solid #5893df;
+      cursor: pointer;
+    }
+  `;
+
   return (
     <Stack sx={{ height: "100%" }}>
-      <MainWrapper direction="row" bgcolor="background.default">
+      <MainWrapper bgcolor="background.default">
         <Typography color="text.secondary" p={4}>
           Home Page
         </Typography>
+        <Box p={4}>
+          <StyledLink>
+            <Link to="/login">Sign In</Link>
+          </StyledLink>
+          <StyledLink>
+            <Link to="/signup">Sign Up</Link>
+          </StyledLink>
+        </Box>
       </MainWrapper>
     </Stack>
   );

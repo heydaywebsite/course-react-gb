@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { addMessage } from "../../store/messages";
+import { addMessageWithFirebase } from "../../store/messages";
 import { getMessagesList } from "../../store/messages";
 import { Message } from "./Message";
 import { MessageInput } from "./MessageInput";
@@ -49,7 +49,6 @@ export const MessagesList = () => {
   const getBotMessage = () => ({
     message: "Hello from bot! Tap '0' or '1'",
     author: "Bot",
-    id: "firstBotMessage",
   });
 
   const getBotAnswer = (message) => {
@@ -63,41 +62,63 @@ export const MessagesList = () => {
 
   useEffect(() => {
     const firstBotMessage = getBotMessage();
-    dispatch(addMessage(chatId, firstBotMessage));
-  }, [chatId]);
+    dispatch(
+      addMessageWithFirebase(
+        chatId,
+        firstBotMessage.message,
+        firstBotMessage.author
+      )
+    );
+  }, [chatId, dispatch]);
 
-  const addMessageWithThunk = (chatId, message) => (dispatch, getState) => {
-    dispatch(addMessage(chatId, message));
-    if (message.author !== "Bot") {
-      const botMessage = getBotAnswer(message.message);
-      setTimeout(() => dispatch(addMessage(chatId, botMessage)), 2000);
+  useEffect(() => {
+    const lastMessage =
+      (messages &&
+        messages[chatId] &&
+        messages[chatId].length &&
+        messages[chatId][messages[chatId].length - 1]) ||
+      null;
+    if (lastMessage && lastMessage.author !== "Bot") {
+      const botMessage = getBotAnswer(lastMessage?.message);
+      setTimeout(
+        () =>
+          dispatch(
+            addMessageWithFirebase(
+              chatId,
+              botMessage.message,
+              botMessage.author
+            )
+          ),
+        2000
+      );
     }
-  };
+  }, [messages, chatId, dispatch]);
 
   return (
     <>
       <MessagesWrapper direction="row">
         <List sx={{ height: "100%", padding: "30px" }}>
-          {messages[chatId]?.map((message) => (
-            <StyledListItem
-              key={message?.id}
-              sx={
-                message?.author === "User"
-                  ? {
-                      backgroundColor: "info.main",
-                    }
-                  : {
-                      backgroundColor: "info.dark",
-                    }
-              }
-            >
-              <Message message={message} />
-            </StyledListItem>
-          ))}
+          {messages &&
+            messages[chatId]?.map((message) => (
+              <StyledListItem
+                key={message?.id}
+                sx={
+                  message?.author === "User"
+                    ? {
+                        backgroundColor: "info.main",
+                      }
+                    : {
+                        backgroundColor: "info.dark",
+                      }
+                }
+              >
+                <Message message={message} />
+              </StyledListItem>
+            ))}
         </List>
       </MessagesWrapper>
       <InputWrapper direction="row" bgcolor="primary.dark">
-        <MessageInput addMessageWithThunk={addMessageWithThunk} />
+        <MessageInput />
       </InputWrapper>
     </>
   );

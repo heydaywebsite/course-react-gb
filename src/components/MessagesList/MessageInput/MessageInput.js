@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addMessage } from "../../../store/messages";
+import { addMessageWithFirebase } from "../../../store/messages";
 import { TextField, InputAdornment } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import styled from "@emotion/styled";
@@ -14,14 +14,14 @@ const StyledIcon = styled(Send)`
   }
 `;
 
-export const MessageInput = ({ addMessageWithThunk }) => {
+export const MessageInput = () => {
   const { chatId } = useParams();
 
   const dispatch = useDispatch();
 
   const onAddMessage = useCallback(
-    (message) => {
-      dispatch(addMessageWithThunk(chatId, message));
+    (message, author) => {
+      dispatch(addMessageWithFirebase(chatId, message, author));
     },
     [chatId, dispatch]
   );
@@ -30,7 +30,7 @@ export const MessageInput = ({ addMessageWithThunk }) => {
 
   const sendMessage = () => {
     if (value) {
-      onAddMessage({ message: value, author: "User" });
+      onAddMessage(value, "User");
       setValue("");
     }
   };
