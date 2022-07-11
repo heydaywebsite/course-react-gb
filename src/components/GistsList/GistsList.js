@@ -57,7 +57,7 @@ export const GistsList = () => {
 
   return (
     <Stack p={4} sx={{ width: "100%", overflowY: "scroll" }}>
-      {gists.map(renderGist)}
+      {gists?.map(renderGist)}
     </Stack>
   );
 };
